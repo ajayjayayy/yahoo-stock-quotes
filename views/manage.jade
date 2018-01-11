@@ -1,0 +1,22 @@
+form(method="post" action="/manage/register")
+    input(type="text", name="stocks")
+    | 
+    input(type="submit", value="Register") 
+
+form(method="post" action="/manage/unregister")
+    input(type="text", name="stocks")
+    | 
+    input(type="submit", value="Unregister")
+
+b Invalid Stocks
+br
+each stock in invalidSymbols
+    a(href="/stocks/#{stock}") #{stock}
+    | 
+br
+br
+b All Stocks
+br
+each stock in allSymbols
+    a(href="/stocks/#{stock}") #{stock}
+    | 

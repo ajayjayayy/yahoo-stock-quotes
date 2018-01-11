@@ -1,0 +1,27 @@
+{
+    "name": "stockinfo",
+    "config": {
+        "delay": 1000,
+        "limit": 15,
+        "repeatNotFound": 3,
+        "fileTimeout": 15000
+    },
+    "scripts": {
+        "start": "node app.js"
+    },
+    "version": "1.0.0",
+    "description": "Collect and cache stock information",
+    "author": "Alexander Voloshko",
+    "license": "MIT",
+    "dependencies": {
+        "async": "^2.6.0",
+        "body-parser": "^1.18.2",
+        "cheerio": "^1.0.0-rc.2",
+        "compression": "^1.7.1",
+        "express": "^4.16.2",
+        "jade": "^1.11.0",
+        "moment": "^2.19.2",
+        "winston": "^2.4.0",
+        "winston-daily-rotate-file": "^1.7.2"
+    }
+}

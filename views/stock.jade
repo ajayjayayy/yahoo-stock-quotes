@@ -1,0 +1,13 @@
+b #{symbol}
+p Price: #{price}
+p Max: #{max}
+p Min: #{min}
+p Open: #{open}
+p Volume: #{volume}
+p Capitalization: #{cap}
+p Change: #{change}
+p Prev: #{prev}
+p Created: #{moment(created * 1000).format("YYYY/MM/DD HH:MM")}
+p Updated: #{updated && moment(updated * 1000).format("YYYY/MM/DD HH:MM")}
+p Invalid: #{invalid}
+a(href="https://finance.yahoo.com/quote/#{symbol}") Yahoo
