@@ -3,7 +3,7 @@ It's Node.js app to get stock quotes from Yahoo.
 
 Recently Yahoo has shut down the Finance API. The web service parses web pages like `http://yahoo.com/quote/AAPL` to retrieve the necessary data.
 
-It's fast and robust. Both HTML and REST are avaialble to add/remove symbols.
+It's fast and robust. Both HTML and REST are avaialble to add/remove stock symbols.
 
 ## Supported features
 
