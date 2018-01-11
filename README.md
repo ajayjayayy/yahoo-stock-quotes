@@ -1,5 +1,5 @@
-# yahoo-stock-quotes
-Node.js app to get stock quotes from Yahoo. It's fast and robust. Both HTML and REST are avaialble to add/remove symbols.
+What is Yahoo Stock Quotes?
+It's Node.js app to get stock quotes from Yahoo. It's fast and robust. Both HTML and REST are avaialble to add/remove symbols.
 
 ## Supported features
 
