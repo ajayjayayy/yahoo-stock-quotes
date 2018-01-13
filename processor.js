@@ -10,8 +10,9 @@ const https = require('https')
 
 const config = require('./package.json').config
 
-const MARKET_TZ = "America/New_York"
-const MARKET_TIME = "09.30-16.00"
+const MARKET_TZ = 'America/New_York'
+const MARKET_TIME = '09.30-16.00'
+const MARKET_DAYS = ['Monday", "Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 function Processor() {
 }
@@ -162,13 +163,21 @@ function compareTime(first, second) {
 }
 
 function marketOpened() {
+
+    var date = new Date()
+
+    var dateOfWeek = date.toLocaleString("en-US", {timeZone: MARKET_TZ, timeZoneName: "short", weekday: 'long'})
+    if (!MARKET_DAYS.filter(d => dateOfWeek.startsWith(d)).length) {
+        return false
+    }
+
     var from = MARKET_TIME.split('-')[0].split('.')
     var to = MARKET_TIME.split('-')[1].split('.')
 
     var ifrom = [parseInt(from[0]), parseInt(from[1])]
     var ito = [parseInt(to[0]), parseInt(to[1])]
 
-    var hms = new Date().toLocaleString("en-US", {timeZone: MARKET_TZ, timeZoneName: "short", hour12: false}).split(" ")[1].split(":")
+    var hms = date.toLocaleString("en-US", {timeZone: MARKET_TZ, timeZoneName: "short", hour12: false}).split(" ")[1].split(":")
     var nytime = [parseInt(hms[0]), parseInt(hms[1])]
 
     return compareTime(nytime, ifrom) >= 0 && compareTime(nytime, ito) <= 0
