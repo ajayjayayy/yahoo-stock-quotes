@@ -138,7 +138,10 @@ Processor.process = function(force) {
 }
 
 function loadPage(url, success, error) {
-    request.get({url: url}, (err, response, body) => {
+    request({ method: 'GET'
+        , uri: url
+        , gzip: true
+    }, (err, response, body) => {
         if (err) {
             error(err)
         } else {
