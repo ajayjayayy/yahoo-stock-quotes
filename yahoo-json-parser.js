@@ -49,7 +49,7 @@ YahooJSONParser.prototype.volume = function() {
 }
 
 YahooJSONParser.prototype.cap = function() {
-    return json.marketCap.fmt || 'N/A'
+    return (json.marketCap.fmt || 'N/A').toUpperCase()
 }
 
 YahooJSONParser.prototype.prev = function() {
