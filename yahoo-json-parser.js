@@ -1,26 +1,27 @@
-var json = null
+let json = null
 
-function yahooJSONParser(text) {
+function YahooJSONParser(text) {
 
-    var startQuotes = text.indexOf('QuoteSummaryStore')
-    if (startQuotes == -1) {
+    const startQuotes = text.indexOf('QuoteSummaryStore')
+    if (startQuotes === -1) {
         return
     }
 
-    var startPrice = text.indexOf('"price"')
-    if (startPrice == -1) {
+    const startPrice = text.indexOf('"price"')
+    if (startPrice === -1) {
         return
     }
 
-    var start = text.indexOf('{', startPrice), end = -1
-    var level = 0
-    for (var i = start + 1; i < text.length; ++i) {
-        if (text.charAt(i) == '{') {
+    const start = text.indexOf('{', startPrice)
+    let end = -1
+    let level = 0
+    for (let i = start + 1; i < text.length; ++i) {
+        if (text.charAt(i) === '{') {
             level += 1
         }
 
-        if (text.charAt(i) == '}') {
-            if (level == 0) {
+        if (text.charAt(i) === '}') {
+            if (level === 0) {
                 end = i
                 break
             }
@@ -31,36 +32,36 @@ function yahooJSONParser(text) {
     json = JSON.parse(text.substring(start, end + 1))
 }
 
-yahooJSONParser.prototype.valid = function() {
+YahooJSONParser.prototype.valid = function() {
     return json != null && json.regularMarketPrice != null && json.regularMarketChangePercent != null
 }
 
-yahooJSONParser.prototype.price = function() {
+YahooJSONParser.prototype.price = function() {
     return json.regularMarketPrice.raw
 }
 
-yahooJSONParser.prototype.open = function() {
+YahooJSONParser.prototype.open = function() {
     return json.regularMarketOpen.raw
 }
 
-yahooJSONParser.prototype.volume = function() {
+YahooJSONParser.prototype.volume = function() {
     return json.regularMarketVolume.raw
 }
 
-yahooJSONParser.prototype.cap = function() {
+YahooJSONParser.prototype.cap = function() {
     return json.marketCap.fmt || 'N/A'
 }
 
-yahooJSONParser.prototype.prev = function() {
+YahooJSONParser.prototype.prev = function() {
     return json.regularMarketPreviousClose.raw
 }
 
-yahooJSONParser.prototype.change = function() {
+YahooJSONParser.prototype.change = function() {
     return Math.round(json.regularMarketChangePercent.raw * 10000) / 100
 }
 
-yahooJSONParser.prototype.minMax = function() {
+YahooJSONParser.prototype.minMax = function() {
     return [json.regularMarketDayLow.raw, json.regularMarketDayHigh.raw]
 }
 
-module.exports = yahooJSONParser
+module.exports = YahooJSONParser

@@ -2,8 +2,8 @@ const logger = require('./logger')
 
 const data = require('./data')
 const stats = require('./stats')
-const yahooHTMLParser = require('./yahoo-html-parser')
-const yahooJSONParser = require('./yahoo-json-parser')
+//const YahooHTMLParser = require('./yahoo-html-parser')
+const YahooJSONParser = require('./yahoo-json-parser')
 
 const async = require("async")
 const https = require('https')
@@ -18,10 +18,10 @@ function Processor() {
 }
 
 Processor.processSymbol = function(symbol, callback) {
-    var url = 'https://finance.yahoo.com/quote/' + symbol
+    const url = 'https://finance.yahoo.com/quote/' + symbol
     loadPage(url, (text) => {
 
-        var parser = new yahooJSONParser(text)
+        const parser = new YahooJSONParser(text)
 
         if (!parser.valid()) {
             callback(null)
@@ -29,9 +29,9 @@ Processor.processSymbol = function(symbol, callback) {
         }
 
         try {
-            var minMax = parser.minMax()
+            const minMax = parser.minMax()
 
-            var newStock = {
+            const newStock = {
                 symbol: symbol,
                 price: parser.price(),
                 open: parser.open(),
@@ -42,12 +42,10 @@ Processor.processSymbol = function(symbol, callback) {
                 prev: parser.prev(),
                 max: minMax[1]
             }
-
             callback(newStock)
         } catch(err) {
             logger.error("exception while processing %s %s", symbol, err.stack)
             callback(null)
-            return
         }
     }, (err) => {
         logger.error("loadPage error: " + url + "; " + err.message)
@@ -73,19 +71,18 @@ Processor.processSymbols = function(symbols, callback, it) {
 
     logger.debug('start it %d; stocks %d', it, symbols.length)
 
-    var functions = []
+    const functions = []
 
-    var timeStarted = Math.floor(Date.now() / 1000)
-    var successCounter = 0, failedCounter = 0
+    const timeStarted = Math.floor(Date.now() / 1000)
+    let successCounter = 0, failedCounter = 0
 
-    var loggingTask = null
-    var loggingTask = setInterval(() => {
+    const loggingTask = setInterval(() => {
         logger.debug('req / sec %d; success %d; failed %d', stats.RPS, successCounter, failedCounter)
     }, 10000)
 
     Processor.updateStats('Processing', symbols.length, timeStarted)
 
-    var failedSymbols = []
+    const failedSymbols = []
     symbols.forEach((symbol) => {
         functions.push((callback) => {
             Processor.processSymbol(symbol, function(stock) {
@@ -107,7 +104,7 @@ Processor.processSymbols = function(symbols, callback, it) {
 
     async.parallelLimit(functions,
         config.limit,  // limit
-        function(err) {
+        function() {
             clearInterval(loggingTask)
             logger.debug('finish it %d; success %d; failed %d', it, successCounter, failedCounter)
 
@@ -122,7 +119,7 @@ Processor.processSymbols = function(symbols, callback, it) {
 }
 
 Processor.process = function(force) {
-    var newSymbols = data.newSymbols()
+    const newSymbols = data.newSymbols()
     stats.marketOpened = marketOpened()
     if (stats.marketOpened || force) {
         Processor.processSymbols(newSymbols.concat(data.oldSymbols()), function() {
@@ -140,22 +137,28 @@ Processor.process = function(force) {
 }
 
 function loadPage(url, success, error) {
-    https.get(url, (resp) => {
-        var res = ''
+    var ss = https.get(url, (resp) => {
+        let res = ''
         resp.on('data', (chunk) => {
             res += chunk
         }).on('end', () => {
             success(res)
-        }).on("error", (err) => {
+        }).on('error', (err) => {
             error(err)
-        }).on("timeout", (err) => {
+        }).on('timeout', (err) => {
             logger.error('Caught https timeout: %s', err.stack)
             error(err)
-        }).on("uncaughtException", (err) => {
+        }).on('uncaughtException', (err) => {
             logger.error('Caught https exception: %s', err.stack)
             error(err)
         })
+        resp.socket.on('error', function(err) {
+            logger.error('Socket exception: %s', err.stack)
+            error(err)
+        })
     })
+
+    ss = 2;
 }
 
 function compareTime(first, second) {
@@ -164,21 +167,21 @@ function compareTime(first, second) {
 
 function marketOpened() {
 
-    var date = new Date()
+    const date = new Date()
 
-    var dateOfWeek = date.toLocaleString("en-US", {timeZone: MARKET_TZ, timeZoneName: "short", weekday: 'long'})
+    const dateOfWeek = date.toLocaleString("en-US", {timeZone: MARKET_TZ, timeZoneName: "short", weekday: 'long'})
     if (!MARKET_DAYS.filter(d => dateOfWeek.startsWith(d)).length) {
         return false
     }
 
-    var from = MARKET_TIME.split('-')[0].split('.')
-    var to = MARKET_TIME.split('-')[1].split('.')
+    const from = MARKET_TIME.split('-')[0].split('.')
+    const to = MARKET_TIME.split('-')[1].split('.')
 
-    var ifrom = [parseInt(from[0]), parseInt(from[1])]
-    var ito = [parseInt(to[0]), parseInt(to[1])]
+    const ifrom = [parseInt(from[0]), parseInt(from[1])]
+    const ito = [parseInt(to[0]), parseInt(to[1])]
 
-    var hms = date.toLocaleString("en-US", {timeZone: MARKET_TZ, timeZoneName: "short", hour12: false}).split(" ")[1].split(":")
-    var nytime = [parseInt(hms[0]), parseInt(hms[1])]
+    const hms = date.toLocaleString("en-US", {timeZone: MARKET_TZ, timeZoneName: "short", hour12: false}).split(" ")[1].split(":")
+    const nytime = [parseInt(hms[0]), parseInt(hms[1])]
 
     return compareTime(nytime, ifrom) >= 0 && compareTime(nytime, ito) <= 0
 }

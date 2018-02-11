@@ -3,11 +3,11 @@ const fs = require('fs')
 
 const config = require('./package.json').config
 
-var modified = false
-var invalid = {}
+let modified = false
+const invalid = {}
 const fileName = 'data.db'
 
-var data = {}
+let data = {}
 try {
     data = JSON.parse(fs.readFileSync(fileName, 'utf8'))
 } catch (err) {
@@ -36,7 +36,7 @@ Data.prototype.updateStock = function(stock) {
         delete invalid[stock.symbol]
         modified = true
 
-        var created = data[stock.symbol].created
+        const created = data[stock.symbol].created
 
         data[stock.symbol] = stock
         data[stock.symbol].created = created
@@ -49,7 +49,7 @@ Data.prototype.setInvalid = function(symbol) {
 }
 
 Data.prototype.isInvalid = function(symbol) {
-    return invalid[symbol] == 1
+    return invalid[symbol] === 1
 }
 
 Data.prototype.removeStock = function(symbol) {
@@ -64,7 +64,7 @@ Data.prototype.symbols = function() {
 }
 
 Data.prototype.newSymbols = function() {
-    return  Object.values(data).filter(s => s.price == undefined && invalid[s.symbol] == undefined).map(s => s.symbol)
+    return  Object.values(data).filter(s => s.price === undefined && invalid[s.symbol] === undefined).map(s => s.symbol)
 }
 
 Data.prototype.oldSymbols = function() {
