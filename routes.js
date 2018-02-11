@@ -11,14 +11,23 @@ router.get('/', function(req, res) {
 /* REST API */
 
 router.get('/stocks', function(req, res) {
-    var result = []
+    const result = []
+    const hasDates = req.query.hasDates === 'true'
     req.query.symbols.split('|').forEach(function (symbol) {
-        var stock = data.getStock(symbol)
+        let stock = data.getStock(symbol)
         if (stock && stock.price) {
-            result.push(stock)
+            if (!hasDates) {
+                stock = Object.assign({})
+                delete stock.created
+                delete stock.updated
+            }
+        } else if (hasDates) {
+            stock = { "symbol":symbol, "created": "N/A" }
         } else {
-            result.push({ "symbol":symbol, "created": "N/A" })
+            stock = { "symbol":symbol }
         }
+
+        result.push(stock)
     })
 
     res.send(result)
