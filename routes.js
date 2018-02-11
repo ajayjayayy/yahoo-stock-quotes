@@ -16,16 +16,17 @@ router.get('/stocks', function(req, res) {
     req.query.symbols.split('|').forEach(function (symbol) {
         let stock = data.getStock(symbol)
         if (stock && stock.price) {
-            if (!hasDates) {
-                stock = Object.assign({})
-                delete stock.created
-                delete stock.updated
-            }
-        } else if (hasDates) {
-            stock = { "symbol":symbol, "created": "N/A" }
+            stock = Object.assign({}, stock)
         } else {
-            stock = { "symbol":symbol }
+            stock = { "symbol":symbol, "created": "N/A" }
         }
+
+        if (!hasDates) {
+            delete stock.created
+            delete stock.updated
+        }
+        delete stock.invalid
+        delete stock._locals
 
         result.push(stock)
     })
