@@ -6,7 +6,8 @@ const stats = require('./stats')
 const YahooJSONParser = require('./yahoo-json-parser')
 
 const async = require("async")
-const https = require('https')
+const request = require('request')
+request.gzip = true
 
 const config = require('./package.json').config
 
@@ -137,28 +138,13 @@ Processor.process = function(force) {
 }
 
 function loadPage(url, success, error) {
-    var ss = https.get(url, (resp) => {
-        let res = ''
-        resp.on('data', (chunk) => {
-            res += chunk
-        }).on('end', () => {
-            success(res)
-        }).on('error', (err) => {
-            error(err)
-        }).on('timeout', (err) => {
-            logger.error('Caught https timeout: %s', err.stack)
-            error(err)
-        }).on('uncaughtException', (err) => {
-            logger.error('Caught https exception: %s', err.stack)
-            error(err)
-        })
-        resp.socket.on('error', function(err) {
-            logger.error('Socket exception: %s', err.stack)
+    request.get({url: url}, (err, response, body) => {
+        if (err) {
             error(err)
-        })
+        } else {
+            success(body)
+        }
     })
-
-    ss = 2;
 }
 
 function compareTime(first, second) {
