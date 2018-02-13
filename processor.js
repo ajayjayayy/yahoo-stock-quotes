@@ -13,7 +13,7 @@ const config = require('./package.json').config
 
 const MARKET_TZ = 'America/New_York'
 const MARKET_TIME = '09.30-16.00'
-const MARKET_DAYS = ['Monday", "Tuesday', 'Wednesday', 'Thursday', 'Friday']
+const MARKET_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 function Processor() {
 }
